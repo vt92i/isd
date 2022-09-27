@@ -54,7 +54,7 @@ void print_data(Data data[ROW][COL]) {
 
     for (i = 0; i < ROW; i++) {
         for (j = 0; j < COL; j++) {
-            printf("[%d | %s] ", d_ptr->id, d_ptr->nama);
+            printf("[%d | %s] \t", d_ptr->id, d_ptr->nama);
             d_ptr++;
         }
         printf("\n");

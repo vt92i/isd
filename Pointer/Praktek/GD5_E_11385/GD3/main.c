@@ -119,12 +119,12 @@ int main(void) {
 
                         Data *temp = find_by_id(d_ptr, D, current_id);
 
-                        d_ptr = find_by_id(d_ptr, D, target_id);
-                        if (strcmpi(d_ptr->nama, "-") != 0) {
+                        if (strcmpi(find_by_id(d_ptr, D, target_id)->nama, "-") != 0) {
                             printf("\nID tidak kosong!");
                             break;
                         }
 
+                        d_ptr = find_by_id(d_ptr, D, target_id);
                         *d_ptr = make_data(target_id, temp->nama, temp->tanggal_lahir);
 
                         d_ptr = find_by_id(d_ptr, D, current_id);
