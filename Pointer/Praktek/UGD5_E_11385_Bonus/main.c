@@ -20,7 +20,7 @@ int main(void) {
 
         printf("\n\n[ Posisi Sekarang ]");
         printf("\nID : %d", d_ptr->id);
-        printf("\nNama : %s", d_ptr->nama);
+        printf("\nJudul Buku : %s", d_ptr->judul_buku);
         printf("\nNo Buku : %s", d_ptr->no_buku);
         printf("\nTanggal Terbit : %s", d_ptr->tanggal_terbit);
         printf("\nKategori : %s", d_ptr->kategori);
@@ -94,7 +94,7 @@ int main(void) {
                 break;
 
             case 2:
-                if (strcmpi(d_ptr->nama, "-") != 0) {
+                if (strcmpi(d_ptr->judul_buku, "-") != 0) {
                     printf("\nData sudah terisi!\n");
                 } else {
                     printf("\n--- Input Data ---\n");
@@ -104,7 +104,7 @@ int main(void) {
                 break;
 
             case 3:
-                if (strcmpi(d_ptr->nama, "-") == 0) {
+                if (strcmpi(d_ptr->judul_buku, "-") == 0) {
                     printf("\nData kosong!\n");
                 } else {
                     printf("\n--- Ubah Data ---\n");
@@ -114,7 +114,7 @@ int main(void) {
                 break;
 
             case 4:
-                if (strcmpi(d_ptr->nama, "-") != 0) {
+                if (strcmpi(d_ptr->judul_buku, "-") != 0) {
                     string answer;
                     printf("\nYakin Hapus Data? (y/N)");
                     fflush(stdin);
@@ -130,7 +130,7 @@ int main(void) {
                 break;
 
             case 5:
-                if (strcmpi(d_ptr->nama, "-") == 0) {
+                if (strcmpi(d_ptr->judul_buku, "-") == 0) {
                     printf("\nData kosong!\n");
                 } else {
                     printf("\nMasukan ID : ");
@@ -145,13 +145,13 @@ int main(void) {
                         target_id = id;
 
                         Data *d = find_by_id(d_ptr, D, current_id);
-                        if (strcmpi(find_by_id(d_ptr, D, target_id)->nama, "-") != 0) {
+                        if (strcmpi(find_by_id(d_ptr, D, target_id)->judul_buku, "-") != 0) {
                             printf("\nTarget ID tidak kosong!\n");
                             break;
                         }
 
                         d_ptr = find_by_id(d_ptr, D, target_id);
-                        *d_ptr = make_data(target_id, d->no_buku, d->nama, d->tanggal_terbit, d->kategori);
+                        *d_ptr = make_data(target_id, d->no_buku, d->judul_buku, d->tanggal_terbit, d->kategori);
 
                         d_ptr = find_by_id(d_ptr, D, current_id);
                         *d_ptr = make_data(current_id, "-", "-", "-", "-");

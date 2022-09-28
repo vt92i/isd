@@ -1,10 +1,10 @@
 #include "header.h"
 
-Data make_data(int id, string no_buku, string nama, string tanggal_terbit, string kategori) {
+Data make_data(int id, string no_buku, string judul_buku, string tanggal_terbit, string kategori) {
     Data D;
 
     D.id = id;
-    strcpy(D.nama, nama);
+    strcpy(D.judul_buku, judul_buku);
     strcpy(D.no_buku, no_buku);
     strcpy(D.tanggal_terbit, tanggal_terbit);
     strcpy(D.kategori, kategori);
@@ -65,7 +65,7 @@ void print_data(Data data[ROW][COL]) {
 
 void input_data(Data* d_ptr) {
     while (true) {
-        printf("Masukan No Buku: ");
+        printf("Masukan No Buku : ");
         fflush(stdin);
         gets(d_ptr->no_buku);
 
@@ -76,18 +76,18 @@ void input_data(Data* d_ptr) {
     }
 
     while (true) {
-        printf("Masukan Judul: ");
+        printf("Masukan Judul Buku : ");
         fflush(stdin);
-        gets(d_ptr->nama);
+        gets(d_ptr->judul_buku);
 
-        if (strlen(d_ptr->nama) == 0 || strcmpi(d_ptr->nama, "-") == 0)
+        if (strlen(d_ptr->judul_buku) == 0 || strcmpi(d_ptr->judul_buku, "-") == 0)
             printf("\nJudul harus diisi!\n");
         else
             break;
     }
 
     while (true) {
-        printf("Masukan Tanggal Terbit: ");
+        printf("Masukan Tanggal Terbit : ");
         fflush(stdin);
         gets(d_ptr->tanggal_terbit);
 
@@ -98,7 +98,7 @@ void input_data(Data* d_ptr) {
     }
 
     while (true) {
-        printf("Masukan Kategori: ");
+        printf("Masukan Kategori : ");
         fflush(stdin);
         gets(d_ptr->kategori);
 
