@@ -43,7 +43,8 @@ int main(void) {
                 printf("\n1. Pilih Data by ID");
                 printf("\n2. Shift Right");
                 printf("\n3. Shift Left");
-                printf("\n4. Shift Top");
+                printf("\n4. Shift Up");
+                printf("\n5. Shift Down");
 
                 printf("\n>>> ");
                 scanf("%d", &submenu);
@@ -81,10 +82,15 @@ int main(void) {
                     case 4:
                         if (d_ptr->id > 5)
                             d_ptr -= 5;
-                        else {
+                        else
                             d_ptr += 15;
-                        }
+                        break;
 
+                    case 5:
+                        if (d_ptr->id < 16)
+                            d_ptr += 5;
+                        else
+                            d_ptr -= 15;
                         break;
 
                     default:
