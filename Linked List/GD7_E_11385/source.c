@@ -87,6 +87,9 @@ void delete_last(List *L) {
 
 void print_list(List L) {
     address P;
-    for (P = L.first; P != NULL; P = P->next)
-        printf("%d -> ", P->data);
+    for (P = L.first; P != NULL; P = P->next) {
+        printf("%d", P->data);
+        if (P->next != NULL)
+            printf(" -> ");
+    }
 }
