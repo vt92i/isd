@@ -1,4 +1,5 @@
 #include "header.h"
+#include "time.h"
 
 int main(void) {
     multilist l;
@@ -13,15 +14,18 @@ int main(void) {
 
     int arr[1024];
 
-    // insert_last_parent(&l, make_data_parent(1, "A", "Aktif"));
-    // insert_last_parent(&l, make_data_parent(2, "B", "Aktif"));
-    // insert_last_parent(&l, make_data_parent(33, "C", "Aktif"));
+    // Generate parents
+    char ch = 'A';
+    int i;
+    srand(time(NULL));
+    for (i = 0; i < 26; i++) {
+        char str[2] = {ch++, '\0'};
+        insert_last_parent(&l, make_data_parent(i + 1, str, rand() % 2 == 0 ? "Aktif" : "Tidak Aktif"));
+    }
 
-    // insert_last_child(l, 1, make_data_child(3, "Selesai", 2.5));
-    // insert_last_child(l, 1, make_data_child(4, "Selesai", 3));
-    // insert_last_child(l, 2, make_data_child(5, "Selesai", 5));
-    // insert_last_child(l, 33, make_data_child(6, "Selesai", 12));
-    // insert_last_child(l, 1, make_data_child(7, "Selesai", 9));
+    // Generate children
+    for (i = 0; i < (rand() % 100) + 1; i++)
+        insert_last_child(l, (rand() % 26) + 1, make_data_child(i + 1 + 100, rand() % 2 == 0 ? "Selesai" : "Proses", (rand() % 24) + 1));
 
     do {
         system("cls");
