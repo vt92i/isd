@@ -178,16 +178,10 @@ int main(void) {
                         printf("ID : ");
                         scanf("%d", &c);
                         if (c < 1) continue;
-                        if (is_parent_unique(l, c)) {
-                            if (is_child_unique(l, c)) {
-                                break;
-                            } else {
-                                printf("\nChild dengan ID %d sudah ada!\n", c);
-                            }
-                        } else {
-                            printf("\nParent dengan ID %d sudah ada!\n", c);
-                            print_parent(find_parent(l, c));
-                        }
+                        if (is_child_unique(l, c))
+                            break;
+                        else
+                            printf("\nChild dengan ID %d sudah ada!\n", c);
                     }
 
                     while (true) {
