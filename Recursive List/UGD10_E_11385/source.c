@@ -48,6 +48,7 @@ void print_list(list l) {
         printf("Tanggal Kembali : %s \n", l->d.tanggal_kembali);
         printf("Status : %s \n", l->d.status);
         printf("Harga Pinjam : Rp %.0f \n", l->d.harga_pinjam);
+        printf("Denda : Rp %.0f \n", l->d.denda);
 
         print_list(l->next);
     }

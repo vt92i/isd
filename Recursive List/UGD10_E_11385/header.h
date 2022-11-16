@@ -13,7 +13,7 @@ typedef struct node *list;
 typedef struct data {
     int id;
     string jenis_buku, nama_peminjam, tanggal_pinjam, tanggal_kembali, status;
-    float harga_pinjam;
+    float harga_pinjam, denda;
 } data;
 
 typedef struct node {

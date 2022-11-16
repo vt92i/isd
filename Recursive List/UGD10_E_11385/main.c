@@ -122,6 +122,7 @@ int main(void) {
                             strcpy(d.status, "Dipinjam");
 
                             d.harga_pinjam = strcmp(d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
+                            d.denda = 0;
                             insert_last(&l, allocate_data(d));
 
                             break;
@@ -178,6 +179,7 @@ int main(void) {
                             strcpy(d.status, "Dipinjam");
 
                             d.harga_pinjam = strcmp(d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
+                            d.denda = 0;
                             insert_after(&l, allocate_data(d), id_data);
 
                             break;
@@ -229,7 +231,8 @@ int main(void) {
                     printf("Jenis Buku : %s \n", target_node->d.jenis_buku);
                     printf("Tanggal Pinjam : %s \n", target_node->d.tanggal_pinjam);
                     printf("Status : %s \n", target_node->d.status);
-                    printf("Harga Pinjam : Rp %.0f \n\n", target_node->d.harga_pinjam);
+                    printf("Harga Pinjam : Rp %.0f \n", target_node->d.harga_pinjam);
+                    printf("Denda : Rp %.0f \n\n", target_node->d.denda);
 
                     float overdue = 0;
                     float denda = 0;
@@ -261,21 +264,23 @@ int main(void) {
 
                         if (overdue > 5)
                             denda = (overdue - 5) * 6000;
-                        target_node->d.harga_pinjam += denda;
+                        d.denda = denda;
+                        target_node->d.denda = d.denda;
 
                         printf("\nOverdue : %.0f hari", overdue);
                         printf("\nDenda : Rp %.0f", denda);
-                        printf("\nTotal : Rp %.0f \n", target_node->d.harga_pinjam);
+                        printf("\nTotal : Rp %.0f \n", target_node->d.harga_pinjam + d.denda);
                     }
 
                     printf("\nInput Uang : ");
                     scanf("%f", &uang);
 
-                    if (uang - target_node->d.harga_pinjam >= 0) {
-                        printf("\nOK! Kembalian : Rp %.0f \n", uang - target_node->d.harga_pinjam);
+                    if (uang - target_node->d.harga_pinjam - target_node->d.denda >= 0) {
+                        printf("\nOK! Kembalian : Rp %.0f \n", uang - target_node->d.harga_pinjam - target_node->d.denda);
 
+                        total_pendapatan += target_node->d.harga_pinjam + target_node->d.denda;
                         target_node->d.harga_pinjam = strcmp(target_node->d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
-                        total_pendapatan += target_node->d.harga_pinjam;
+                        target_node->d.denda = d.denda;
 
                         strcpy(target_node->d.status, "Dikembalikan");
                         insert_last(&l_history, allocate_data(target_node->d));
@@ -284,10 +289,20 @@ int main(void) {
                     } else {
                         printf("\nUang Kurang!");
                         printf("\nPembayaran Diterima : Rp %.0f", uang);
-                        printf("\nPembayaran Kurang : Rp %.0f", uang - target_node->d.harga_pinjam);
+                        printf("\nPembayaran Kurang : Rp %.0f", uang - target_node->d.harga_pinjam - target_node->d.denda);
 
                         strcpy(target_node->d.status, "Pembayaran Kurang");
-                        target_node->d.harga_pinjam -= uang;
+                        if (target_node->d.denda > 0) {
+                            if (target_node->d.denda - uang > 0)
+                                target_node->d.denda -= uang;
+                            else {
+                                target_node->d.harga_pinjam -= uang - target_node->d.denda;
+                                target_node->d.denda = 0;
+                            }
+                        } else
+                            target_node->d.harga_pinjam -= uang;
+
+                        total_pendapatan += uang;
                     }
                 } else
                     printf("\nNo Data Found!\n");
