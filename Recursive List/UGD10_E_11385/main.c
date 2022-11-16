@@ -1,36 +1,6 @@
 #include "header.h"
 
-time_t init_date(int day, int month, int year) {
-    struct tm date = {0};
-
-    date.tm_mday = day;
-    date.tm_mon = month - 1;
-    date.tm_year = year - 1900;
-
-    date.tm_hour = 0;
-    date.tm_min = 0;
-    date.tm_sec = 0;
-    date.tm_wday = 0;
-    date.tm_yday = 0;
-    date.tm_isdst = 0;
-
-    return mktime(&date);
-}
-
 int main(void) {
-    // struct tm {
-    //     int tm_sec, tm_min, tm_hour;
-    //     int tm_mday, tm_mon, tm_year;
-    //     int tm_wday, tm_yday, tm_isdst;
-    // };
-
-    // time_t t = init_date(10, 11, 2022);
-    // time_t now = time(NULL);
-    // printf("Date : %s \n", ctime(&t));
-    // printf("Time Difference : %.2f days \n", difftime(now, t) / 60 / 60 / 24);
-
-    // return 0;
-
     list l, l_history;
     init_empty(&l);
     init_empty(&l_history);

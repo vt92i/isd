@@ -1,5 +1,22 @@
 #include "header.h"
 
+time_t init_date(int day, int month, int year) {
+    struct tm date = {0};
+
+    date.tm_mday = day;
+    date.tm_mon = month - 1;
+    date.tm_year = year - 1900;
+
+    date.tm_hour = 0;
+    date.tm_min = 0;
+    date.tm_sec = 0;
+    date.tm_wday = 0;
+    date.tm_yday = 0;
+    date.tm_isdst = 0;
+
+    return mktime(&date);
+}
+
 int is_one_element(list l) {
     return l->next == NULL;
 }

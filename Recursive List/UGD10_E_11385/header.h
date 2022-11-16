@@ -21,6 +21,8 @@ typedef struct node {
     address next;
 } node;
 
+time_t init_date(int day, int month, int year);
+
 int is_one_element(list l);
 int is_empty(list l);
 
