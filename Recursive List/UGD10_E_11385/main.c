@@ -215,20 +215,19 @@ int main(void) {
 
                             printf("Tanggal Kembali : ");
                             fflush(stdin);
-                            gets(d.tanggal_kembali);
+                            gets(target_node->d.tanggal_kembali);
 
-                            if (strlen(d.tanggal_kembali) != 10) continue;
-                            if (d.tanggal_kembali[2] != '/' && d.tanggal_kembali[5] != '/') continue;
-                            sscanf(d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
+                            if (strlen(target_node->d.tanggal_kembali) != 10) continue;
+                            if (target_node->d.tanggal_kembali[2] != '/' && target_node->d.tanggal_kembali[5] != '/') continue;
+                            sscanf(target_node->d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
                             if (q.day < 1 || q.day > 31) continue;
                             if (q.month < 1 || q.month > 12) continue;
                             if (q.year < 1 || q.year > 9999) continue;
 
-                            sscanf(d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
-                            sscanf(d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
+                            sscanf(target_node->d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            sscanf(target_node->d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
                             overdue = difftime(init_date(q.day, q.month, q.year), init_date(p.day, p.month, p.year)) / 86400;
                             if (overdue < 0) continue;
-                            strcpy(target_node->d.tanggal_kembali, d.tanggal_kembali);
                             break;
                         }
 
@@ -250,6 +249,13 @@ int main(void) {
 
                         total_pendapatan += target_node->d.harga_pinjam + target_node->d.denda;
                         target_node->d.harga_pinjam = strcmp(target_node->d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
+
+                        sscanf(target_node->d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
+                        sscanf(target_node->d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
+                        overdue = difftime(init_date(q.day, q.month, q.year), init_date(p.day, p.month, p.year)) / 86400;
+                        if (overdue > 5)
+                            denda = (overdue - 5) * 6000;
+                        d.denda = denda;
                         target_node->d.denda = d.denda;
 
                         strcpy(target_node->d.status, "Dikembalikan");
