@@ -1,256 +1,371 @@
 #include "header_multilist.h"
 #include "header_linkedlist.h"
 
+// Utils
+address_parent check_login_dokter(multilist ml, string username, string password);
+address_child find_child_by_id(address_parent ap, int id);
+void update_child_by_id(address_parent ap, int id, data_child dc);
+void delete_at_child(multilist ml, address_parent ap, int id_child);
+void print_laporan(address_parent ap);
+bool is_hewan_unique(linked_list l, int id);
+bool is_riwayat_unique(linked_list l, int id);
+void sort_asc(linked_list *l);
+
 int main(void) {
-    // Multilist
-    multilist ml;
-    init_multilist(&ml);
+    struct auth {
+        string current_user;
+        bool is_auth;
+    } auth = {"", false};
 
-    address_parent p_tmp;
-    address_child c_tmp;
+    string username, password;
+    int menu;
 
-    string nama, tipe, status, confirm;
-    int menu, counter, f, c;
-    float berat;
+    multilist dokter;
+    init_multilist(&dokter);
 
-    int arr[1024];
+    data_parent dp;
+    address_parent ap;
+    address_child ac;
 
-    // Linked List
-    list l, l_history;
-    init_linkedlist(&l);
-    init_linkedlist(&l_history);
+    linked_list hewan;
+    init_linkedlist(&hewan);
 
-    data d;
-    address target_node;
-
-    int submenu, id_data;
-    int id = 1;
-
-    float total_pendapatan = 0, uang;
+    data_hewan dh;
+    address ah;
 
     struct date {
         int day, month, year;
-    } p, q;
+    } p;
 
-    int choice;
+    while (1) {
+        system("cls");
 
-    printf("1. Multilist\n");
-    printf("2. Linked List\n");
-    printf("Choice: ");
-    scanf("%d", &choice);
+        printf("\n[ Login ]\n");
 
-    switch (choice) {
-        case 1:
+        while (1) {
+            printf("Username : ");
+            fflush(stdin);
+            gets(username);
+
+            if (strlen(username) > 0) break;
+        }
+
+        while (1) {
+            printf("Password : ");
+            fflush(stdin);
+            gets(password);
+
+            if (strlen(password) > 0) break;
+        }
+
+        if (strcmp(username, "0") == 0 && strcmp(password, "0") == 0) {
+            printf("\nSayonara!\n");
+            getch();
+            break;
+        }
+
+        if (strcmp(username, "admin") == 0 && strcmp(password, "admin") == 0) {
+            strcpy(auth.current_user, username);
+            auth.is_auth = true;
+
+            printf("\nLogin berhasil!\n");
+            getch();
+
+            system("cls");
+            printf("\nSelamat datang, %s!\n", auth.current_user);
+            getch();
+
             do {
                 system("cls");
 
-                printf("\n\n==== UNGUIDED MULTILIST=====");
-                printf("\n[ Parent ]");
-                printf("\n1. Input Mesin Cuci");
-                printf("\n2. Edit Status Mesin Cuci");
-                printf("\n3. Hapus Data Mesin Cuci\n");
+                printf("\n[ Menu Admin ]\n");
+                printf("[ Core ]\n");
+                printf("1. Tambah Dokter\n");
+                printf("2. Tampil Dokter\n");
+                printf("3. Ubah Dokter\n");
+                printf("4. Hapus Dokter\n\n");
 
-                printf("\n[ Child ]");
-                printf("\n4. Input Paket Cucian\n");
+                printf("[ Utility ]\n");
+                printf("5. Cari Dokter\n");
+                printf("6. Pendaftaran Periksa Hewan\n");
+                printf("7. Tampil Hewan + Riwayat Periksa\n");
+                printf("8. Hapus Hewan\n");
 
-                printf("\n[ Utility ]");
-                printf("\n5. Hitung Jumlah Mesin Cuci");
-                printf("\n6. Tampil Seluruh Data");
-                printf("\n7. Distribusi Paket Cucian");
+                printf("--------------------------------\n");
+                printf("0. Logout\n");
 
-                printf("\n------------------------------------------------");
-                printf("\n0. Exit");
-
-                printf("\n>>> ");
+                printf(">>> ");
                 scanf("%d", &menu);
-
                 switch (menu) {
                     case 1:
-                        printf("\n[ Input Mesin Cuci ]\n");
-                        while (true) {
+                        printf("\n[ Tambah Dokter ]\n");
+
+                        while (1) {
                             printf("ID : ");
-                            scanf("%d", &id);
-                            if (id < 1) continue;
-                            if (is_parent_unique(ml, id)) {
-                                break;
-                            } else {
-                                printf("\nID sudah ada, silahkan masukkan ID yang lain!\n");
-                            }
+                            scanf("%d", &dp.id);
+
+                            if (is_parent_unique(dokter, dp.id)) break;
                         }
 
-                        while (true) {
-                            printf("Tipe : ");
+                        while (1) {
+                            printf("Nama : ");
                             fflush(stdin);
-                            gets(tipe);
-                            if (strlen(tipe) != 0) {
-                                break;
-                            } else {
-                                printf("\nTipe tidak boleh kosong!\n");
-                            }
+                            gets(dp.nama);
+
+                            if (strlen(dp.nama) > 0) break;
                         }
 
-                        while (true) {
-                            printf("Status : ");
+                        while (1) {
+                            printf("Tanggal Bergabung (DD-MM-YYYY): ");
                             fflush(stdin);
-                            gets(status);
-                            if (strlen(status) != 0) {
-                                if (strcmp(status, "Aktif") == 0 || strcmp(status, "Tidak Aktif") == 0) {
-                                    break;
-                                } else {
-                                    printf("\nHarus Aktif atau Tidak Aktif!\n");
-                                }
-                            } else {
-                                printf("\nTipe tidak boleh kosong!\n");
-                            }
+                            gets(dp.tanggal_bergabung);
+
+                            if (strlen(dp.tanggal_bergabung) != 10) continue;
+                            if (dp.tanggal_bergabung[2] != '-' && dp.tanggal_bergabung[5] != '-') continue;
+                            sscanf(dp.tanggal_bergabung, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            if (p.day < 1 || p.day > 31) continue;
+                            if (p.month < 1 || p.month > 12) continue;
+                            if (p.year < 1 || p.year > 9999) continue;
+                            break;
                         }
 
-                        if (id % 2 == 0)
-                            insert_last_parent(&ml, make_data_parent(id, tipe, status));
-                        else
-                            insert_first_parent(&ml, make_data_parent(id, tipe, status));
-                        printf("\nData berhasil dimasukkan!\n");
+                        while (1) {
+                            printf("Username : ");
+                            fflush(stdin);
+                            gets(dp.login.username);
+
+                            if (strcmp(dp.login.username, "admin") != 0 && strcmp(dp.login.username, "0") != 0 && strcmp(dp.login.username, "") != 0) break;
+                        }
+
+                        while (1) {
+                            printf("Password : ");
+                            fflush(stdin);
+                            gets(dp.login.password);
+
+                            if (strcmp(dp.login.password, "admin") != 0 && strcmp(dp.login.password, "0") != 0 && strcmp(dp.login.password, "") != 0) break;
+                        }
+
+                        insert_last_parent(&dokter, dp);
                         break;
 
                     case 2:
-                        printf("\n[ Edit Status Mesin Cuci ]\n");
-
-                        printf("ID Parent : ");
-                        scanf("%d", &id);
-
-                        p_tmp = find_parent(ml, id);
-                        if (p_tmp == NULL) {
-                            printf("\nID Parent tidak ditemukan!\n");
-                        } else {
-                            print_parent(p_tmp);
-
-                            if (strcmp(p_tmp->dp.status, "Aktif") == 0) {
-                                printf("\nYakin ingin mengubah data (Aktif -> Tidak Aktif)? (y/n)");
-                                fflush(stdin);
-                                gets(confirm);
-                                if (strcmp(confirm, "y") == 0) {
-                                    strcpy(p_tmp->dp.status, "Tidak Aktif");
-                                    printf("\nData berhasil diubah!\n");
-                                } else {
-                                    printf("\nData tidak jadi diubah!\n");
-                                }
-                            } else {
-                                printf("\nYakin ingin mengubah data (Tidak Aktif -> Aktif)? (y/n)");
-                                fflush(stdin);
-                                gets(confirm);
-                                if (strcmp(confirm, "y") == 0) {
-                                    strcpy(p_tmp->dp.status, "Aktif");
-                                    printf("\nData berhasil diubah!\n");
-                                } else {
-                                    printf("\nData tidak jadi diubah!\n");
-                                }
-                            }
-                        }
+                        printf("\n[ Tampil Dokter ]\n");
+                        print_all_parent(dokter);
                         break;
 
                     case 3:
-                        printf("\n[ Hapus Data Mesin Cuci ]\n");
-                        counter = 0;
-                        for (p_tmp = ml.first_parent; p_tmp != NULL; p_tmp = p_tmp->next) {
-                            if (strcmp(p_tmp->dp.status, "Tidak Aktif") == 0) {
-                                arr[counter] = p_tmp->dp.id;
-                                counter++;
-                            }
-                        }
-                        if (counter == 0) {
-                            printf("\nTidak ada Mesin Cuci yang tidak aktif!\n");
-                            break;
-                        }
-                        printf("\nJumlah Mesin Cuci yang akan dihapus : %d \n", counter);
-                        printf("\nYakin ingin hapus? (y/n)");
+                        printf("\n[ Ubah Dokter ]\n");
+
+                        printf("Input Nama Dokter : ");
                         fflush(stdin);
-                        gets(confirm);
-                        if (strcmp(confirm, "y") == 0) {
-                            for (f = 0; f < counter; f++)
-                                delete_at_parent(&ml, arr[f]);
-                            printf("\nData berhasil dihapus!\n");
+                        gets(dp.nama);
+
+                        printf("\n");
+                        ap = find_parent_by_name(dokter, dp.nama);
+
+                        if (ap != NULL) {
+                            while (1) {
+                                printf("Nama : ");
+                                fflush(stdin);
+                                gets(dp.nama);
+
+                                if (strlen(dp.nama) > 0) break;
+                            }
+
+                            while (1) {
+                                printf("Tanggal Bergabung (DD-MM-YYYY): ");
+                                fflush(stdin);
+                                gets(dp.tanggal_bergabung);
+
+                                if (strlen(dp.tanggal_bergabung) != 10) continue;
+                                if (dp.tanggal_bergabung[2] != '-' && dp.tanggal_bergabung[5] != '-') continue;
+                                sscanf(dp.tanggal_bergabung, "%d/%d/%d", &p.day, &p.month, &p.year);
+                                if (p.day < 1 || p.day > 31) continue;
+                                if (p.month < 1 || p.month > 12) continue;
+                                if (p.year < 1 || p.year > 9999) continue;
+                                break;
+                            }
+
+                            while (1) {
+                                printf("Username : ");
+                                fflush(stdin);
+                                gets(dp.login.username);
+
+                                if (strcmp(dp.login.username, "0") != 0 && strcmp(dp.login.username, "") != 0) break;
+                            }
+
+                            while (1) {
+                                printf("Password : ");
+                                fflush(stdin);
+                                gets(dp.login.password);
+
+                                if (strcmp(dp.login.password, "0") != 0 && strcmp(dp.login.password, "") != 0) break;
+                            }
+
+                            ap->dp = dp;
+                            printf("\nData berhasil diubah!\n");
+
                         } else {
-                            printf("\nData tidak jadi dihapus!\n");
+                            printf("Dokter tidak ditemukan!\n");
                         }
                         break;
 
                     case 4:
-                        printf("\n[ Input Paket Cucian ]\n");
+                        printf("\n[ Hapus Dokter ]\n");
 
-                        printf("ID Parent : ");
-                        scanf("%d", &id);
+                        printf("Input Nama Dokter : ");
+                        fflush(stdin);
+                        gets(dp.nama);
 
-                        p_tmp = find_parent(ml, id);
-                        if (p_tmp == NULL) {
-                            printf("\nID Parent tidak ditemukan!\n");
-                        } else {
-                            if (strcmp(p_tmp->dp.status, "Tidak Aktif") == 0) {
-                                printf("\nMesin Cuci tidak aktif!\n");
-                                break;
-                            }
+                        ap = find_parent_by_name(dokter, dp.nama);
+                        if (ap != NULL) {
+                            linked_list ttmp;
+                            for (ttmp = hewan; ttmp != NULL; ttmp = ttmp->next)
+                                if (ttmp->d.riwayat_periksa.id_dokter == ap->dp.id)
+                                    delete_at(&hewan, find_node_by_id(hewan, ttmp->d.id));
+                            delete_at_parent(&dokter, ap->dp.id);
 
-                            while (true) {
-                                printf("ID : ");
-                                scanf("%d", &c);
-                                if (c < 1) continue;
-                                if (is_child_unique(ml, c))
-                                    break;
-                                else
-                                    printf("\nChild dengan ID %d sudah ada!\n", c);
-                            }
+                            printf("\nDokter dengan nama %s berhasil dihapus!\n", dp.nama);
+                        } else
+                            printf("\nDokter tidak ditemukan!\n");
 
-                            while (true) {
-                                printf("Status : ");
-                                fflush(stdin);
-                                gets(status);
-                                if (strlen(status) != 0) {
-                                    if (strcmp(status, "Selesai") == 0 || strcmp(status, "Proses") == 0) {
-                                        break;
-                                    } else {
-                                        printf("\nHarus Selesai atau Proses!\n");
-                                    }
-                                } else {
-                                    printf("\nStatus tidak boleh kosong!\n");
-                                }
-                            }
-
-                            while (true) {
-                                printf("Berat : ");
-                                scanf("%f", &berat);
-                                if (berat < 1) continue;
-                                break;
-                            }
-
-                            insert_last_child(ml, id, make_data_child(c, status, berat));
-                            printf("\nData berhasil dimasukkan!\n");
-                        }
                         break;
 
                     case 5:
-                        printf("\n[ Hitung Jumlah Mesin Cuci ]\n");
-                        counter = 0;
-                        for (p_tmp = ml.first_parent; p_tmp != NULL; p_tmp = p_tmp->next) counter++;
-                        printf("\nJumlah Mesin Cuci : %d \n", counter);
+                        printf("\n[ Cari Dokter ]\n");
+
+                        printf("Input Nama Dokter : ");
+                        fflush(stdin);
+                        gets(dp.nama);
+
+                        printf("\n");
+                        ap = find_parent_by_name(dokter, dp.nama);
+                        if (ap != NULL)
+                            print_parent(ap);
+                        else
+                            printf("\nDokter tidak ditemukan!\n");
+
                         break;
 
                     case 6:
-                        printf("\n[ Tampil Seluruh Data ]\n");
-                        if (!is_multilist_empty(ml))
-                            print_all(ml);
-                        else
-                            printf("\nList kosong!\n");
+                        printf("\n[ Pendaftaran Periksa Hewan ]\n");
+
+                        if (is_multilist_empty(dokter)) {
+                            printf("\nBelum ada Dokter!\n");
+                            break;
+                        };
+
+                        while (1) {
+                            printf("ID Hewan : ");
+                            scanf("%d", &dh.id);
+
+                            if (is_hewan_unique(hewan, dh.id)) break;
+                        }
+
+                        while (1) {
+                            printf("ID Periksa : ");
+                            scanf("%d", &dh.riwayat_periksa.id);
+
+                            if (is_riwayat_unique(hewan, dh.riwayat_periksa.id)) break;
+                        }
+
+                        while (1) {
+                            printf("Tanggal Periksa (DD-MM-YYYY): ");
+                            fflush(stdin);
+                            gets(dh.riwayat_periksa.tanggal_periksa);
+
+                            if (strlen(dh.riwayat_periksa.tanggal_periksa) != 10) continue;
+                            if (dh.riwayat_periksa.tanggal_periksa[2] != '-' && dh.riwayat_periksa.tanggal_periksa[5] != '-') continue;
+                            sscanf(dh.riwayat_periksa.tanggal_periksa, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            if (p.day < 1 || p.day > 31) continue;
+                            if (p.month < 1 || p.month > 12) continue;
+                            if (p.year < 1 || p.year > 9999) continue;
+                            break;
+                        }
+
+                        while (1) {
+                            printf("ID Dokter : ");
+                            scanf("%d", &dh.riwayat_periksa.id_dokter);
+
+                            ap = find_parent_by_id(dokter, dh.riwayat_periksa.id_dokter);
+                            if (ap != NULL) break;
+                        }
+
+                        while (1) {
+                            printf("Nama Hewan : ");
+                            fflush(stdin);
+                            gets(dh.nama);
+
+                            if (strlen(dh.nama) > 0) break;
+                        }
+
+                        while (1) {
+                            printf("Tanggal Lahir (DD-MM-YYYY): ");
+                            fflush(stdin);
+                            gets(dh.tanggal_lahir);
+
+                            if (strlen(dh.tanggal_lahir) != 10) continue;
+                            if (dh.tanggal_lahir[2] != '-' && dh.tanggal_lahir[5] != '-') continue;
+                            sscanf(dh.tanggal_lahir, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            if (p.day < 1 || p.day > 31) continue;
+                            if (p.month < 1 || p.month > 12) continue;
+                            if (p.year < 1 || p.year > 9999) continue;
+                            break;
+                        }
+
+                        while (1) {
+                            printf("Jenis Hewan (Anjing/Burung/Kucing): ");
+                            fflush(stdin);
+                            gets(dh.jenis_hewan);
+
+                            if (strcmp(dh.jenis_hewan, "Anjing") == 0 || strcmp(dh.jenis_hewan, "Burung") == 0 || strcmp(dh.jenis_hewan, "Kucing") == 0) break;
+                        }
+
+                        while (1) {
+                            printf("Jenis Kelamin (L/P): ");
+                            fflush(stdin);
+                            gets(dh.jenis_kelamin);
+
+                            if (strcmp(dh.jenis_kelamin, "L") == 0 || strcmp(dh.jenis_kelamin, "P") == 0) break;
+                        }
+
+                        insert_last(&hewan, allocate_data(dh));
+                        sort_asc(&hewan);
+                        insert_last_child(dokter, dh.riwayat_periksa.id_dokter, make_data_child(dh.id, dh.nama, dh.tanggal_lahir, dh.jenis_hewan, dh.jenis_kelamin, make_data_subchild(dh.riwayat_periksa.id, dh.riwayat_periksa.tanggal_periksa, "-", "-", false)));
+
                         break;
 
                     case 7:
-                        printf("\n[ Distribusi Paket Cucian ]\n");
-                        distribute(&ml);
-                        printf("\nOK!\n");
+                        printf("\n[ Tampil Hewan + Riwayat Periksa ]\n");
+
+                        if (is_linkedlist_empty(hewan)) {
+                            printf("\nNo Data Found!\n");
+                            break;
+                        }
+
+                        print_list(hewan);
+                        break;
+
+                    case 8:
+                        printf("\n[ Hapus Hewan ]\n");
+
+                        printf("Input ID Hewan : ");
+                        scanf("%d", &dh.id);
+
+                        ah = find_node_by_id(hewan, dh.id);
+                        if (ah != NULL) {
+                            delete_at_child(dokter, find_parent_by_id(dokter, ah->d.riwayat_periksa.id_dokter), ah->d.id);
+                            delete_at(&hewan, ah);
+                            printf("\nBerhasil Hapus Data!\n");
+                        } else {
+                            printf("\nNo Data Found!\n");
+                        }
+
                         break;
 
                     case 0:
-                        printf("\nNama  : Benidiktus Violaz Morello Anjolie");
-                        printf("\nNPM   : 210711385");
-                        printf("\nKelas : ISD E");
-                        printf("\nGood Luck!\n");
+                        strcpy(auth.current_user, "");
+                        auth.is_auth = false;
                         break;
 
                     default:
@@ -259,287 +374,83 @@ int main(void) {
                 }
                 getch();
             } while (menu != 0);
-            break;
+            continue;
+        }
 
-        case 2:
+        ap = check_login_dokter(dokter, username, password);
+        if (ap != NULL) {
+            strcpy(auth.current_user, username);
+            auth.is_auth = true;
+
+            printf("\nLogin berhasil!\n");
+            getch();
+
+            system("cls");
+            printf("\nSelamat datang, %s!\n", auth.current_user);
+            getch();
+
             do {
                 system("cls");
 
-                printf("\n==== Peminjaman Buku =====");
-                printf("\n[ Core ]");
-                printf("\n1. Input Data Buku");
-                printf("\n2. Tampil Data");
-                printf("\n3. Cari Data");
-                printf("\n4. Pengembalian\n");
+                printf("\n[ Menu Dokter ]\n");
+                printf("[ Core ]\n");
+                printf("1. Cek Pendaftaran Periksa Hewan\n");
+                printf("2. Periksa Hewan\n");
+                printf("3. Laporan\n");
 
-                printf("\n[ Utility]");
-                printf("\n5. Riwayat");
+                printf("--------------------------------\n");
+                printf("0. Logout\n");
 
-                printf("\n------------------------------------------------");
-                printf("\n0. Exit");
-
-                printf("\n>>> ");
+                printf(">>> ");
                 scanf("%d", &menu);
 
                 switch (menu) {
                     case 1:
-                        do {
-                            system("cls");
-
-                            printf("\n==== Peminjaman Buku =====");
-                            printf("\n[ Core ]");
-                            printf("\n1. Input Baru");
-                            printf("\n2. Input After ID");
-                            printf("\n0. Menu Utama");
-                            printf("\n>>> ");
-                            scanf("%d", &submenu);
-
-                            if (submenu == 0) break;
-                            switch (submenu) {
-                                case 1:
-                                    printf("\n[ Input Baru ]\n");
-
-                                    d.id = id;
-                                    id++;
-                                    while (1) {
-                                        printf("Nama Peminjam : ");
-                                        fflush(stdin);
-                                        gets(d.nama_peminjam);
-                                        if (strlen(d.nama_peminjam) != 0) break;
-                                    }
-
-                                    while (1) {
-                                        printf("Jenis Buku : ");
-                                        fflush(stdin);
-                                        gets(d.jenis_buku);
-                                        if (strcmp(d.jenis_buku, "Ensiklopedia") == 0 || strcmp(d.jenis_buku, "Biografi") == 0) break;
-                                    }
-
-                                    while (1) {
-                                        p.day = -1;
-                                        p.month = -1;
-                                        p.year = -1;
-
-                                        printf("Tanggal Pinjam : ");
-                                        fflush(stdin);
-                                        gets(d.tanggal_pinjam);
-
-                                        if (strlen(d.tanggal_pinjam) != 10) continue;
-                                        if (d.tanggal_pinjam[2] != '/' && d.tanggal_pinjam[5] != '/') continue;
-                                        sscanf(d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
-                                        if (p.day < 1 || p.day > 31) continue;
-                                        if (p.month < 1 || p.month > 12) continue;
-                                        if (p.year < 1 || p.year > 9999) continue;
-                                        break;
-                                    }
-
-                                    strcpy(d.tanggal_kembali, "N/A");
-                                    strcpy(d.status, "Dipinjam");
-
-                                    d.harga_pinjam = strcmp(d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
-                                    d.denda = 0;
-                                    insert_last(&l, allocate_data(d));
-
-                                    break;
-
-                                case 2:
-                                    printf("\n[ Input After ID ]\n");
-
-                                    printf("Input ID : ");
-                                    scanf("%d", &id_data);
-
-                                    target_node = find_node_by_id(l, id_data);
-
-                                    if (target_node == NULL) {
-                                        printf("\nNo Data Found!\n");
-                                        break;
-                                    }
-
-                                    printf("\n");
-                                    d.id = id;
-                                    id++;
-                                    while (1) {
-                                        printf("Nama Peminjam : ");
-                                        fflush(stdin);
-                                        gets(d.nama_peminjam);
-                                        if (strlen(d.nama_peminjam) != 0) break;
-                                    }
-
-                                    while (1) {
-                                        printf("Jenis Buku : ");
-                                        fflush(stdin);
-                                        gets(d.jenis_buku);
-                                        if (strcmp(d.jenis_buku, "Ensiklopedia") == 0 || strcmp(d.jenis_buku, "Biografi") == 0) break;
-                                    }
-
-                                    while (1) {
-                                        p.day = -1;
-                                        p.month = -1;
-                                        p.year = -1;
-
-                                        printf("Tanggal Pinjam : ");
-                                        fflush(stdin);
-                                        gets(d.tanggal_pinjam);
-
-                                        if (strlen(d.tanggal_pinjam) != 10) continue;
-                                        if (d.tanggal_pinjam[2] != '/' && d.tanggal_pinjam[5] != '/') continue;
-                                        sscanf(d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
-                                        if (p.day < 1 || p.day > 31) continue;
-                                        if (p.month < 1 || p.month > 12) continue;
-                                        if (p.year < 1 || p.year > 9999) continue;
-                                        break;
-                                    }
-
-                                    strcpy(d.tanggal_kembali, "N/A");
-                                    strcpy(d.status, "Dipinjam");
-
-                                    d.harga_pinjam = strcmp(d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
-                                    d.denda = 0;
-                                    insert_after(&l, allocate_data(d), id_data);
-
-                                    break;
-
-                                case 0:
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                            getch();
-                        } while (submenu != 0);
+                        printf("\n[ Cek Pendaftaran Periksa Hewan ]\n");
+                        print_all_children(ap);
                         break;
 
                     case 2:
-                        printf("\n[ Tampil Data ]\n");
-                        print_list(l);
+                        printf("\n[ Periksa Hewan ]\n");
+
+                        printf("Input ID Hewan : ");
+                        scanf("%d", &dh.id);
+
+                        ac = find_child_by_id(ap, dh.id);
+
+                        if (ac != NULL && ac->dc.dsc.is_done != true) {
+                            while (1) {
+                                printf("Diagnosa Penyakit : ");
+                                fflush(stdin);
+                                gets(ac->dc.dsc.diagnosa_penyakit);
+
+                                if (strlen(ac->dc.dsc.diagnosa_penyakit) > 0) break;
+                            }
+
+                            while (1) {
+                                printf("Obat : ");
+                                fflush(stdin);
+                                gets(ac->dc.dsc.obat);
+
+                                if (strlen(ac->dc.dsc.obat) > 0) break;
+                            }
+
+                            ac->dc.dsc.is_done = true;
+                            update_child_by_id(ap, ac->dc.id, ac->dc);
+
+                        } else {
+                            printf("\nNo Data Found!\n");
+                        }
                         break;
 
                     case 3:
-                        printf("\n[ Cari Data ]\n");
-                        printf("Nama Peminjam : ");
-                        fflush(stdin);
-                        gets(d.nama_peminjam);
-
-                        target_node = find_node_by_name(l, d.nama_peminjam);
-                        if (target_node != NULL) {
-                            printf("\n[ ID %d ]\n", target_node->d.id);
-                            printf("Nama Peminjam : %s \n", target_node->d.nama_peminjam);
-                            printf("Jenis Buku : %s \n", target_node->d.jenis_buku);
-                            printf("Tanggal Pinjam : %s \n", target_node->d.tanggal_pinjam);
-                            printf("Status : %s \n", target_node->d.status);
-                            printf("Harga Pinjam : Rp %.0f \n", target_node->d.harga_pinjam);
-                        } else
-                            printf("\nNo Data Found!\n");
-
-                        break;
-
-                    case 4:
-                        printf("\n[ Pengembalian ]\n");
-                        printf("Nama Peminjam : ");
-                        fflush(stdin);
-                        gets(d.nama_peminjam);
-
-                        target_node = find_node_by_name(l, d.nama_peminjam);
-                        if (target_node != NULL) {
-                            printf("\n[ ID %d ]\n", target_node->d.id);
-                            printf("Nama Peminjam : %s \n", target_node->d.nama_peminjam);
-                            printf("Jenis Buku : %s \n", target_node->d.jenis_buku);
-                            printf("Tanggal Pinjam : %s \n", target_node->d.tanggal_pinjam);
-                            printf("Status : %s \n", target_node->d.status);
-                            printf("Harga Pinjam : Rp %.0f \n", target_node->d.harga_pinjam);
-                            printf("Denda : Rp %.0f \n\n", target_node->d.denda);
-
-                            float overdue = 0;
-                            float denda = 0;
-
-                            if (strcmp(target_node->d.status, "Dipinjam") == 0) {
-                                while (1) {
-                                    q.day = -1;
-                                    q.month = -1;
-                                    q.year = -1;
-
-                                    printf("Tanggal Kembali : ");
-                                    fflush(stdin);
-                                    gets(target_node->d.tanggal_kembali);
-
-                                    if (strlen(target_node->d.tanggal_kembali) != 10) continue;
-                                    if (target_node->d.tanggal_kembali[2] != '/' && target_node->d.tanggal_kembali[5] != '/') continue;
-                                    sscanf(target_node->d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
-                                    if (q.day < 1 || q.day > 31) continue;
-                                    if (q.month < 1 || q.month > 12) continue;
-                                    if (q.year < 1 || q.year > 9999) continue;
-
-                                    sscanf(target_node->d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
-                                    sscanf(target_node->d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
-                                    overdue = difftime(init_date(q.day, q.month, q.year), init_date(p.day, p.month, p.year)) / 86400;
-                                    if (overdue < 0) continue;
-                                    break;
-                                }
-
-                                if (overdue > 5)
-                                    denda = (overdue - 5) * 6000;
-                                d.denda = denda;
-                                target_node->d.denda = d.denda;
-
-                                printf("\nOverdue : %.0f hari", overdue);
-                                printf("\nDenda : Rp %.0f", denda);
-                                printf("\nTotal : Rp %.0f \n", target_node->d.harga_pinjam + d.denda);
-                            }
-
-                            printf("\nInput Uang : ");
-                            scanf("%f", &uang);
-
-                            if (uang - target_node->d.harga_pinjam - target_node->d.denda >= 0) {
-                                printf("\nOK! Kembalian : Rp %.0f \n", uang - target_node->d.harga_pinjam - target_node->d.denda);
-
-                                total_pendapatan += target_node->d.harga_pinjam + target_node->d.denda;
-                                target_node->d.harga_pinjam = strcmp(target_node->d.jenis_buku, "Ensiklopedia") == 0 ? 5000 : 10000;
-
-                                sscanf(target_node->d.tanggal_pinjam, "%d/%d/%d", &p.day, &p.month, &p.year);
-                                sscanf(target_node->d.tanggal_kembali, "%d/%d/%d", &q.day, &q.month, &q.year);
-                                overdue = difftime(init_date(q.day, q.month, q.year), init_date(p.day, p.month, p.year)) / 86400;
-                                if (overdue > 5)
-                                    denda = (overdue - 5) * 6000;
-                                d.denda = denda;
-                                target_node->d.denda = d.denda;
-
-                                strcpy(target_node->d.status, "Dikembalikan");
-                                insert_last(&l_history, allocate_data(target_node->d));
-                                delete_at(&l, find_node_by_name(l, d.nama_peminjam));
-
-                            } else {
-                                printf("\nUang Kurang!");
-                                printf("\nPembayaran Diterima : Rp %.0f", uang);
-                                printf("\nPembayaran Kurang : Rp %.0f", uang - target_node->d.harga_pinjam - target_node->d.denda);
-
-                                strcpy(target_node->d.status, "Pembayaran Kurang");
-                                if (target_node->d.denda > 0) {
-                                    if (target_node->d.denda - uang > 0)
-                                        target_node->d.denda -= uang;
-                                    else {
-                                        target_node->d.harga_pinjam -= uang - target_node->d.denda;
-                                        target_node->d.denda = 0;
-                                    }
-                                } else
-                                    target_node->d.harga_pinjam -= uang;
-
-                                total_pendapatan += uang;
-                            }
-                        } else
-                            printf("\nNo Data Found!\n");
-                        break;
-
-                    case 5:
-                        printf("\n[ Riwayat ]\n");
-                        printf("Total Pendapatan : Rp %.0f \n", total_pendapatan);
-                        print_list(l_history);
+                        printf("\n[ Laporan ]\n");
+                        print_laporan(ap);
                         break;
 
                     case 0:
-                        printf("\nNama  : Benidiktus Violaz Morello Anjolie");
-                        printf("\nNPM   : 210711385");
-                        printf("\nKelas : ISD E");
-                        printf("\nGood Luck!\n");
+                        strcpy(auth.current_user, "");
+                        auth.is_auth = false;
                         break;
 
                     default:
@@ -548,8 +459,12 @@ int main(void) {
                 }
                 getch();
             } while (menu != 0);
-            break;
-    }
+            continue;
+        }
+
+        printf("\nUsername atau Password salah!\n");
+        getch();
+    };
 
     return 0;
 }

@@ -3,16 +3,25 @@
 typedef struct parent* address_parent;
 typedef struct child* address_child;
 
-typedef struct data_parent {
+typedef struct data_subchild {
     int id;
-    string tipe, status;
-} data_parent;
+    string tanggal_periksa, diagnosa_penyakit, obat;
+    bool is_done;
+} data_subchild;
 
 typedef struct data_child {
     int id;
-    string status_cucian;
-    float berat;
+    string nama, tanggal_lahir, jenis_hewan, jenis_kelamin;
+    data_subchild dsc;
 } data_child;
+
+typedef struct data_parent {
+    int id;
+    string nama, tanggal_bergabung;
+    struct {
+        string username, password;
+    } login;
+} data_parent;
 
 typedef struct parent {
     data_parent dp;
@@ -32,7 +41,8 @@ typedef struct multilist {
 void init_multilist(multilist* l);
 
 address_parent allocate_parent(data_parent data);
-address_parent find_parent(multilist l, int id_parent);
+address_parent find_parent_by_id(multilist l, int id);
+address_parent find_parent_by_name(multilist l, string nama);
 
 void insert_first_parent(multilist* l, data_parent data);
 void insert_after_parent(multilist* l, int id_parent, data_parent data);
@@ -62,9 +72,9 @@ void delete_last_child(multilist l, int id_parent);
 void print_child(address_child c);
 void print_all_children(address_parent p);
 
-data_parent make_data_parent(int id, string tipe, string status);
-data_child make_data_child(int id, string status_cucian, float berat);
+data_parent make_data_parent(int id, string nama, string tanggal_bergabung, string username, string password);
+data_child make_data_child(int id, string nama, string tanggal_lahir, string jenis_hewan, string jenis_kelamin, data_subchild dsc);
+data_subchild make_data_subchild(int id, string tanggal_periksa, string obat, string diagnosa_penyakit, bool is_done);
 
 bool is_parent_unique(multilist l, int id);
 bool is_child_unique(multilist l, int id);
-void distribute(multilist* l);

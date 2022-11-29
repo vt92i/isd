@@ -13,9 +13,17 @@ address_parent allocate_parent(data_parent data) {
     return p;
 }
 
-address_parent find_parent(multilist l, int id_parent) {
+address_parent find_parent_by_id(multilist l, int id) {
     address_parent p = l.first_parent;
-    while (p != NULL && p->dp.id != id_parent) {
+    while (p != NULL && p->dp.id != id) {
+        p = p->next;
+    }
+    return p;
+}
+
+address_parent find_parent_by_name(multilist l, string nama) {
+    address_parent p = l.first_parent;
+    while (p != NULL && strcmp(p->dp.nama, nama) != 0) {
         p = p->next;
     }
     return p;
@@ -28,7 +36,7 @@ void insert_first_parent(multilist* l, data_parent data) {
 }
 
 void insert_after_parent(multilist* l, int id_parent, data_parent data) {
-    address_parent p = find_parent(*l, id_parent);
+    address_parent p = find_parent_by_id(*l, id_parent);
     if (p != NULL) {
         address_parent q = allocate_parent(data);
         q->next = p->next;
@@ -105,8 +113,10 @@ void delete_all_children(address_parent p) {
 void print_parent(address_parent p) {
     printf("[ Parent ] \n");
     printf("ID : %d \n", p->dp.id);
-    printf("Tipe : %s \n", p->dp.tipe);
-    printf("Status : %s \n", p->dp.status);
+    printf("Nama : %s \n", p->dp.nama);
+    printf("Tanggal Bergabung : %s \n", p->dp.tanggal_bergabung);
+    printf("\tLogin Username : %s \n", p->dp.login.username);
+    printf("\tLogin Password : %s \n", p->dp.login.password);
 }
 
 void print_all(multilist l) {
@@ -144,7 +154,7 @@ address_child allocate_child(data_child data) {
 }
 
 void insert_first_child(multilist l, int id_parent, data_child data) {
-    address_parent p = find_parent(l, id_parent);
+    address_parent p = find_parent_by_id(l, id_parent);
     if (p != NULL) {
         address_child c = allocate_child(data);
         c->next = p->first_child;
@@ -153,7 +163,7 @@ void insert_first_child(multilist l, int id_parent, data_child data) {
 }
 
 void insert_last_child(multilist l, int id_parent, data_child data) {
-    address_parent p = find_parent(l, id_parent);
+    address_parent p = find_parent_by_id(l, id_parent);
     if (p != NULL) {
         if (!have_children(p)) {
             insert_first_child(l, id_parent, data);
@@ -169,7 +179,7 @@ void insert_last_child(multilist l, int id_parent, data_child data) {
 }
 
 void delete_first_child(multilist l, int id_parent) {
-    address_parent p = find_parent(l, id_parent);
+    address_parent p = find_parent_by_id(l, id_parent);
     if (p != NULL) {
         if (have_children(p)) {
             address_child c = p->first_child;
@@ -180,7 +190,7 @@ void delete_first_child(multilist l, int id_parent) {
 }
 
 void delete_last_child(multilist l, int id_parent) {
-    address_parent p = find_parent(l, id_parent);
+    address_parent p = find_parent_by_id(l, id_parent);
     if (p != NULL) {
         if (have_children(p)) {
             if (p->first_child->next == NULL) {
@@ -198,10 +208,17 @@ void delete_last_child(multilist l, int id_parent) {
 }
 
 void print_child(address_child c) {
-    printf("\t[ Child ] \n");
-    printf("\tID : %d \n", c->dc.id);
-    printf("\tStatus Cucian : %s \n", c->dc.status_cucian);
-    printf("\tBerat : %.2f KG\n", c->dc.berat);
+    if (!c->dc.dsc.is_done) {
+        printf("ID : %d \n", c->dc.id);
+        printf("Nama : %s \n", c->dc.nama);
+        printf("Tanggal Lahir : %s \n", c->dc.tanggal_lahir);
+        printf("Jenis Hewan : %s \n", c->dc.jenis_hewan);
+        printf("Jenis Kelamin : %s \n", c->dc.jenis_kelamin);
+
+        printf("\t[ Riwayat Periksa ]\n");
+        printf("\tTanggal Periksa : %s \n", c->dc.dsc.tanggal_periksa);
+        printf(c->dc.dsc.is_done ? "\tStatus : Selesai \n" : "\tStatus : Belum Selesai \n");
+    }
 }
 
 void print_all_children(address_parent p) {
@@ -213,20 +230,37 @@ void print_all_children(address_parent p) {
 }
 
 // Utility
-data_parent make_data_parent(int id, string tipe, string status) {
+data_parent make_data_parent(int id, string nama, string tanggal_bergabung, string username, string password) {
     data_parent dp;
     dp.id = id;
-    strcpy(dp.tipe, tipe);
-    strcpy(dp.status, status);
+    strcpy(dp.nama, nama);
+    strcpy(dp.tanggal_bergabung, tanggal_bergabung);
+    strcpy(dp.login.username, username);
+    strcpy(dp.login.password, password);
     return dp;
 }
 
-data_child make_data_child(int id, string status_cucian, float berat) {
+data_child make_data_child(int id, string nama, string tanggal_lahir, string jenis_hewan, string jenis_kelamin, data_subchild dsc) {
     data_child dc;
     dc.id = id;
-    strcpy(dc.status_cucian, status_cucian);
-    dc.berat = berat;
+    strcpy(dc.nama, nama);
+    strcpy(dc.tanggal_lahir, tanggal_lahir);
+    strcpy(dc.jenis_hewan, jenis_hewan);
+    strcpy(dc.jenis_kelamin, jenis_kelamin);
+    dc.dsc = dsc;
+
     return dc;
+}
+
+data_subchild make_data_subchild(int id, string tanggal_periksa, string obat, string diagnosa_penyakit, bool is_done) {
+    data_subchild dsc;
+    dsc.id = id;
+    strcpy(dsc.tanggal_periksa, tanggal_periksa);
+    strcpy(dsc.obat, obat);
+    strcpy(dsc.diagnosa_penyakit, diagnosa_penyakit);
+    dsc.is_done = is_done;
+
+    return dsc;
 }
 
 bool is_parent_unique(multilist l, int id) {
@@ -245,27 +279,4 @@ bool is_child_unique(multilist l, int id) {
         }
     }
     return true;
-}
-
-void distribute(multilist* l) {
-    address_parent p, pq = NULL;
-    address_child q;
-
-    multilist f;
-    init_multilist(&f);
-    for (p = l->first_parent; p != NULL; p = p->next)
-        insert_last_parent(&f, p->dp);
-
-    int counter = 0;
-    for (p = l->first_parent; p != NULL; p = p->next) {
-        if (!have_children(p)) continue;
-        for (q = p->first_child; q != NULL; q = q->next) {
-            if (pq == NULL)
-                pq = f.first_parent;
-            insert_last_child(f, pq->dp.id, q->dc);
-            pq = pq->next;
-        }
-    }
-
-    *l = f;
 }
