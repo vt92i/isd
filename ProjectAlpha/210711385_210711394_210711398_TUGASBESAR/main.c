@@ -122,7 +122,7 @@ int main(void) {
 
                             if (strlen(dp.tanggal_bergabung) != 10) continue;
                             if (dp.tanggal_bergabung[2] != '-' && dp.tanggal_bergabung[5] != '-') continue;
-                            sscanf(dp.tanggal_bergabung, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            sscanf(dp.tanggal_bergabung, "%d-%d-%d", &p.day, &p.month, &p.year);
                             if (p.day < 1 || p.day > 31) continue;
                             if (p.month < 1 || p.month > 12) continue;
                             if (p.year < 1 || p.year > 9999) continue;
@@ -142,7 +142,7 @@ int main(void) {
                             fflush(stdin);
                             gets(dp.login.password);
 
-                            if (strcmp(dp.login.password, "admin") != 0 && strcmp(dp.login.password, "0") != 0 && strcmp(dp.login.password, "") != 0) break;
+                            if (strcmp(dp.login.password, "admincintasatwa") != 0 && strcmp(dp.login.password, "0") != 0 && strcmp(dp.login.password, "") != 0) break;
                         }
 
                         insert_last_parent(&dokter, dp);
@@ -179,7 +179,7 @@ int main(void) {
 
                                 if (strlen(dp.tanggal_bergabung) != 10) continue;
                                 if (dp.tanggal_bergabung[2] != '-' && dp.tanggal_bergabung[5] != '-') continue;
-                                sscanf(dp.tanggal_bergabung, "%d/%d/%d", &p.day, &p.month, &p.year);
+                                sscanf(dp.tanggal_bergabung, "%d-%d-%d", &p.day, &p.month, &p.year);
                                 if (p.day < 1 || p.day > 31) continue;
                                 if (p.month < 1 || p.month > 12) continue;
                                 if (p.year < 1 || p.year > 9999) continue;
@@ -276,7 +276,7 @@ int main(void) {
 
                             if (strlen(dh.riwayat_periksa.tanggal_periksa) != 10) continue;
                             if (dh.riwayat_periksa.tanggal_periksa[2] != '-' && dh.riwayat_periksa.tanggal_periksa[5] != '-') continue;
-                            sscanf(dh.riwayat_periksa.tanggal_periksa, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            sscanf(dh.riwayat_periksa.tanggal_periksa, "%d-%d-%d", &p.day, &p.month, &p.year);
                             if (p.day < 1 || p.day > 31) continue;
                             if (p.month < 1 || p.month > 12) continue;
                             if (p.year < 1 || p.year > 9999) continue;
@@ -306,7 +306,7 @@ int main(void) {
 
                             if (strlen(dh.tanggal_lahir) != 10) continue;
                             if (dh.tanggal_lahir[2] != '-' && dh.tanggal_lahir[5] != '-') continue;
-                            sscanf(dh.tanggal_lahir, "%d/%d/%d", &p.day, &p.month, &p.year);
+                            sscanf(dh.tanggal_lahir, "%d-%d-%d", &p.day, &p.month, &p.year);
                             if (p.day < 1 || p.day > 31) continue;
                             if (p.month < 1 || p.month > 12) continue;
                             if (p.year < 1 || p.year > 9999) continue;
