@@ -1,52 +1,19 @@
 #include "header.h"
 
-void sort_array(mobil m[], int n) {
-    if (n == 1) return;
-    int count = 0;
-
-    void for_recursion(int i) {
-        if (i > ARRAY_LENGTH - 1) return;
-
-        if (strcmp(m[i].jenis_mobil, m[i + 1].jenis_mobil) > 0) {
-            mobil temp = m[i];
-            m[i] = m[i + 1];
-            m[i + 1] = temp;
-            count++;
-        }
-
-        for_recursion(i + 1);
-    }
-    for_recursion(0);
-
-    if (count == 0) return;
-    sort_array(m, n - 1);
-}
-
-void print_array(mobil m[], int index) {
-    if (index > ARRAY_LENGTH - 1) return;
-
-    if (strcmp(m[index].jenis_mobil, "") == 0)
-        print_array(m, index + 1);
-    else {
-        printf("Jenis Mobil : %s \n", m[index].jenis_mobil);
-        printf("Merk Mobil : %s \n", m[index].merk_mobil);
-        printf("Warna Mobil : %s \n\n", m[index].warna_mobil);
-        print_array(m, index + 1);
-    }
-}
-
 int main(void) {
     binary_tree bt;
     init_empty(&bt);
 
-    int menu;
+    int menu, p;
     string jenis_mobil, merk_mobil, warna_mobil;
-    // address pp, qq;
 
-    mobil m[ARRAY_LENGTH];
     int index = 0;
-
+    mobil m[ARRAY_LENGTH];
     init_mobil(m, 0);
+
+    binary_tree bt_bin;
+    init_empty(&bt_bin);
+    int bin;
 
     do {
         system("cls");
@@ -56,7 +23,11 @@ int main(void) {
         printf("\n1. Input Mobil");
         printf("\n2. Input BST");
         printf("\n3. Read");
-        printf("\n4. Delete");
+        printf("\n4. Delete\n");
+
+        printf("\n[ Utility ]");
+        printf("\n5. Input Binary");
+        printf("\n6. Print Tree");
 
         printf("\n------------------------------------------------");
         printf("\n0. Exit");
@@ -67,6 +38,8 @@ int main(void) {
         switch (menu) {
             case 1:
                 printf("\n[ Input Mobil ]\n");
+
+                m[index].key = index;
 
                 while (1) {
                     printf("Input Jenis Mobil : ");
@@ -102,7 +75,22 @@ int main(void) {
 
             case 2:
                 printf("\n[ Input BST ]\n");
-                insert_tree_bst(&bt, m, 0);
+
+                while (1) {
+                    printf("Input Jenis Mobil : ");
+                    fflush(stdin);
+                    gets(jenis_mobil);
+
+                    if (strlen(jenis_mobil) > 0) break;
+                }
+
+                p = find_car(m, 0, jenis_mobil);
+                if (p != -1) {
+                    insert_tree_bst(&bt, allocate_data(m[p].key, m[p].jenis_mobil, m[p].merk_mobil, m[p].warna_mobil));
+                    printf("\nOK!\n");
+                } else
+                    printf("\nError!\n");
+
                 break;
 
             case 3:
@@ -117,13 +105,13 @@ int main(void) {
                     break;
                 }
 
-                printf("\nPre Order : ");
+                printf("\n[ Pre Order ]\n");
                 preoder(bt);
 
-                printf("\nIn Order : ");
+                printf("\n[ In Order ]\n");
                 inorder(bt);
 
-                printf("\nPost Order : ");
+                printf("\n[ Post Order ]\n");
                 postorder(bt);
 
                 break;
@@ -147,6 +135,25 @@ int main(void) {
 
                 delete_tree_at(&bt, jenis_mobil);
 
+                break;
+
+            case 5:
+                printf("\n[ Input Binary ]\n");
+
+                while (1) {
+                    printf("Input Binary : ");
+                    scanf("%d", &bin);
+
+                    if (bin > 0) break;
+                }
+
+                printf("Decimal : %d \n", bin2dec(bin));
+                insert_tree_bst(&bt_bin, allocate_data(bin2dec(bin), "", "", ""));
+                break;
+
+            case 6:
+                printf("\n[ Print Tree ]\n");
+                print_tree(bt_bin, 0);
                 break;
 
             case 0:
