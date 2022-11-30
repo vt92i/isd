@@ -64,7 +64,7 @@ int main(void) {
             break;
         }
 
-        if (strcmp(username, "admin") == 0 && strcmp(password, "admin") == 0) {
+        if (strcmp(username, "admin") == 0 && strcmp(password, "admincintasatwa") == 0) {
             strcpy(auth.current_user, username);
             auth.is_auth = true;
 
