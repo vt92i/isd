@@ -12,46 +12,56 @@ bool is_leaf(binary_tree bt) {
     return is_empty(bt->left) && is_empty(bt->right);
 }
 
-bool is_found(binary_tree bt, string jenis_pokemon) {
+bool is_found(binary_tree bt, string jenis_mobil) {
     if (is_empty(bt))
         return false;
     else
-        return strcmp(bt->pokemon.jenis_pokemon, jenis_pokemon) == 0 ||
-               is_found(bt->left, jenis_pokemon) ||
-               is_found(bt->right, jenis_pokemon);
+        return strcmp(bt->mobil.jenis_mobil, jenis_mobil) == 0 ||
+               is_found(bt->left, jenis_mobil) ||
+               is_found(bt->right, jenis_mobil);
 }
 
-address allocate_data(int hp, string jenis_pokemon) {
+address allocate_data(string jenis_mobil, string merk_mobil, string warna_mobil) {
     address p = (node *)malloc(sizeof(node));
     if (p == NULL)
         return NULL;
     else {
-        strcpy(p->pokemon.jenis_pokemon, jenis_pokemon);
-        p->pokemon.hp = hp;
+        strcpy(p->mobil.jenis_mobil, jenis_mobil);
+        strcpy(p->mobil.merk_mobil, merk_mobil);
+        strcpy(p->mobil.warna_mobil, warna_mobil);
+
         p->left = p->right = NULL;
         return p;
     }
 }
 
-void insert_tree_bst(binary_tree *bt, address p) {
-    if (is_empty(*bt))
-        *bt = p;
+void insert_tree_bst(binary_tree *bt, mobil m[], int index) {
+    if (index > 64 - 1) return;
+
+    if (strcmp(m[index].jenis_mobil, "") == 0)
+        insert_tree_bst(bt, m, index + 1);
+
     else {
-        if (p->pokemon.hp < (*bt)->pokemon.hp)
-            insert_tree_bst(&(*bt)->left, p);
-        else
-            insert_tree_bst(&(*bt)->right, p);
+        if (is_empty(*bt)) {
+            *bt = allocate_data(m[index].jenis_mobil, m[index].merk_mobil, m[index].warna_mobil);
+            insert_tree_bst(bt, m, index + 1);
+        } else {
+            if (index < 5)
+                insert_tree_bst(&(*bt)->left, m, index);
+            else
+                insert_tree_bst(&(*bt)->right, m, index);
+        }
     }
 }
 
-void delete_tree_at(binary_tree *bt, string jenis_pokemon) {
-    if (strcmp((*bt)->pokemon.jenis_pokemon, jenis_pokemon) == 0) {
+void delete_tree_at(binary_tree *bt, string jenis_mobil) {
+    if (strcmp((*bt)->mobil.jenis_mobil, jenis_mobil) == 0) {
         delete_tree(&(*bt));
     } else {
-        if (is_found((*bt)->left, jenis_pokemon))
-            delete_tree_at(&(*bt)->left, jenis_pokemon);
+        if (is_found((*bt)->left, jenis_mobil))
+            delete_tree_at(&(*bt)->left, jenis_mobil);
         else
-            delete_tree_at(&(*bt)->right, jenis_pokemon);
+            delete_tree_at(&(*bt)->right, jenis_mobil);
     }
 }
 
@@ -75,16 +85,16 @@ void delete_leaf(address *p) {
 
 void preoder(binary_tree bt) {
     if (!is_empty(bt)) {
-        printf("%s - %d | ", bt->pokemon.jenis_pokemon, bt->pokemon.hp);
+        printf("%s - %s - %s \n", bt->mobil.jenis_mobil, bt->mobil.merk_mobil, bt->mobil.warna_mobil);
         preoder(bt->left);
         preoder(bt->right);
     }
 }
-
+//
 void inorder(binary_tree bt) {
     if (!is_empty(bt)) {
         inorder(bt->left);
-        printf("%s - %d | ", bt->pokemon.jenis_pokemon, bt->pokemon.hp);
+        printf("%s - %s - %s \n", bt->mobil.jenis_mobil, bt->mobil.merk_mobil, bt->mobil.warna_mobil);
         inorder(bt->right);
     }
 }
@@ -93,18 +103,35 @@ void postorder(binary_tree bt) {
     if (!is_empty(bt)) {
         postorder(bt->left);
         postorder(bt->right);
-        printf("%s - %d | ", bt->pokemon.jenis_pokemon, bt->pokemon.hp);
+        printf("%s - %s - %s \n", bt->mobil.jenis_mobil, bt->mobil.merk_mobil, bt->mobil.warna_mobil);
     }
 }
 
-void update_tree(binary_tree *bt, string jenis_pokemon, string new_data) {
-    if (strcmp((*bt)->pokemon.jenis_pokemon, jenis_pokemon) == 0) {
-        strcpy((*bt)->pokemon.jenis_pokemon, new_data);
-        return;
-    } else {
-        if (is_found((*bt)->left, jenis_pokemon))
-            update_tree(&(*bt)->left, jenis_pokemon, new_data);
-        else
-            update_tree(&(*bt)->right, jenis_pokemon, new_data);
-    }
+// void update_tree(binary_tree *bt, string jenis_mobil, string new_data) {
+//     if (strcmp((*bt)->mobil.jenis_mobil, jenis_mobil) == 0) {
+//         strcpy((*bt)->mobil.jenis_mobil, new_data);
+//         return;
+//     } else {
+//         if (is_found((*bt)->left, jenis_mobil))
+//             update_tree(&(*bt)->left, jenis_mobil, new_data);
+//         else
+//             update_tree(&(*bt)->right, jenis_mobil, new_data);
+//     }
+// }
+
+void init_mobil(mobil m[], int index) {
+    if (index > ARRAY_LENGTH - 1) return;
+    strcpy(m[index].jenis_mobil, "");
+    strcpy(m[index].merk_mobil, "");
+    strcpy(m[index].warna_mobil, "");
+    init_mobil(m, index + 1);
+}
+
+bool is_unique(mobil m[], string jenis_mobil, int index) {
+    if (index > ARRAY_LENGTH - 1) return true;
+
+    if (strcmp(m[index].jenis_mobil, jenis_mobil) == 0)
+        return false;
+
+    is_unique(m, jenis_mobil, index + 1);
 }
