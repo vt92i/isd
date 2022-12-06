@@ -111,12 +111,11 @@ void delete_all_children(address_parent p) {
 }
 
 void print_parent(address_parent p) {
-    printf("[ Parent ] \n");
-    printf("ID : %d \n", p->dp.id);
-    printf("Nama : %s \n", p->dp.nama);
-    printf("Tanggal Bergabung : %s \n", p->dp.tanggal_bergabung);
-    printf("\tLogin Username : %s \n", p->dp.login.username);
-    printf("\tLogin Password : %s \n", p->dp.login.password);
+    printf("\t\t\t\t\t\t\t\tID : %d \n", p->dp.id);
+    printf("\t\t\t\t\t\t\t\tNama : %s \n", p->dp.nama);
+    printf("\t\t\t\t\t\t\t\tTanggal Bergabung : %s \n", p->dp.tanggal_bergabung);
+    printf("\t\t\t\t\t\t\t\tLogin Username : %s \n", p->dp.login.username);
+    printf("\t\t\t\t\t\t\t\tLogin Password : %s \n", p->dp.login.password);
 }
 
 void print_all(multilist l) {
@@ -133,6 +132,7 @@ void print_all_parent(multilist l) {
     address_parent p;
     for (p = l.first_parent; p != NULL; p = p->next) {
         print_parent(p);
+        printf("\t\t\t\t\t\t\t\t===========================");
         printf("\n");
     }
 }
@@ -209,15 +209,15 @@ void delete_last_child(multilist l, int id_parent) {
 
 void print_child(address_child c) {
     if (!c->dc.dsc.is_done) {
-        printf("ID : %d \n", c->dc.id);
-        printf("Nama : %s \n", c->dc.nama);
-        printf("Tanggal Lahir : %s \n", c->dc.tanggal_lahir);
-        printf("Jenis Hewan : %s \n", c->dc.jenis_hewan);
-        printf("Jenis Kelamin : %s \n", c->dc.jenis_kelamin);
+        printf("\t\t\t\t\t\t\t\tID : %d \n", c->dc.id);
+        printf("\t\t\t\t\t\t\t\tNama : %s \n", c->dc.nama);
+        printf("\t\t\t\t\t\t\t\tTanggal Lahir : %s \n", c->dc.tanggal_lahir);
+        printf("\t\t\t\t\t\t\t\tJenis Hewan : %s \n", c->dc.jenis_hewan);
+        printf("\t\t\t\t\t\t\t\tJenis Kelamin : %s \n", c->dc.jenis_kelamin);
 
-        printf("\t[ Riwayat Periksa ]\n");
-        printf("\tTanggal Periksa : %s \n", c->dc.dsc.tanggal_periksa);
-        printf(c->dc.dsc.is_done ? "\tStatus : Selesai \n" : "\tStatus : Belum Selesai \n");
+        printf("\t\t\t\t\t\t\t\t\t[ Riwayat Periksa ]\n");
+        printf("\t\t\t\t\t\t\t\t\tTanggal Periksa : %s \n", c->dc.dsc.tanggal_periksa);
+        printf(c->dc.dsc.is_done ? "\t\t\t\t\t\t\t\t\t\tStatus : Selesai \n" : "\tStatus : Belum Selesai \n");
     }
 }
 

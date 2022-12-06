@@ -41,17 +41,17 @@ void init_linkedlist(linked_list *l) {
 
 void print_list(linked_list l) {
     if (!is_linkedlist_empty(l)) {
-        printf("\n[ Data Hewan ]\n");
-        printf("ID Hewan : %d\n", l->d.id);
-        printf("Nama : %s\n", l->d.nama);
-        printf("Tanggal Lahir : %s\n", l->d.tanggal_lahir);
-        printf("Jenis Hewan : %s\n", l->d.jenis_hewan);
-        printf("Jenis Kelamin : %s\n", l->d.jenis_kelamin);
+        printf("\n\t\t\t\t\t\t\t\t[ Data Hewan ]\n");
+        printf("\t\t\t\t\t\t\t\tID Hewan : %d\n", l->d.id);
+        printf("\t\t\t\t\t\t\t\tNama : %s\n", l->d.nama);
+        printf("\t\t\t\t\t\t\t\tTanggal Lahir : %s\n", l->d.tanggal_lahir);
+        printf("\t\t\t\t\t\t\t\tJenis Hewan : %s\n", l->d.jenis_hewan);
+        printf("\t\t\t\t\t\t\t\tJenis Kelamin : %s\n", l->d.jenis_kelamin);
 
-        printf("[ Riwayat Periksa ]\n");
-        printf("\tID Periksa : %d \n", l->d.riwayat_periksa.id);
-        printf("\tTanggal Periksa : %s \n", l->d.riwayat_periksa.tanggal_periksa);
-        printf("\tID Dokter : %d \n", l->d.riwayat_periksa.id_dokter);
+        printf("\t\t\t\t\t\t\t\t[ Riwayat Periksa ]\n");
+        printf("\t\t\t\t\t\t\t\t\tID Periksa : %d \n", l->d.riwayat_periksa.id);
+        printf("\t\t\t\t\t\t\t\t\tTanggal Periksa : %s \n", l->d.riwayat_periksa.tanggal_periksa);
+        printf("\t\t\t\t\t\t\t\t\tID Dokter : %d \n", l->d.riwayat_periksa.id_dokter);
 
         print_list(l->next);
     }

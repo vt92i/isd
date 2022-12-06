@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <windows.h>
 
 #define STRING_LENGTH 128
 typedef char string[STRING_LENGTH];
